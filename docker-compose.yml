@@ -1,0 +1,43 @@
+services:
+  nestjs:
+    container_name: nestjs_app
+    image: node:18
+    working_dir: /app
+    command: npm run start:dev
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    depends_on:
+      - mysql
+    volumes:
+      - .:/app
+    restart: always
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: docker_mysqldb
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: always
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: root
+      PMA_PASSWORD: root
+    depends_on:
+      - mysql
+    restart: always
+
+volumes:
+  mysql_data:
